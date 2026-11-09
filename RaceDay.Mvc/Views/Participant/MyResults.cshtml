@@ -1,0 +1,50 @@
+﻿@model System.Text.Json.JsonDocument
+
+@{
+    ViewData["Title"] = "My Results";
+}
+
+<h2>My Race Results</h2>
+
+@if (Model.RootElement.GetArrayLength() == 0)
+{
+    <p>No published results are available yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Category</th>
+                    <th>Finish Time</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RootElement.EnumerateArray())
+                {
+                    var eventName = item.GetProperty("event")
+                    .GetString();
+
+                    var category = item.GetProperty("category")
+                    .GetString();
+
+                    var time = item.GetProperty("finishTime")
+                    .GetString();
+
+                    var position = item.GetProperty("finishPosition")
+                    .GetInt32();
+
+                    <tr>
+                        <td>@eventName</td>
+                        <td>@category</td>
+                        <td>@time</td>
+                        <td>@position</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

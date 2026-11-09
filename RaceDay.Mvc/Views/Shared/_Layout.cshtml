@@ -1,0 +1,181 @@
+﻿@using Microsoft.AspNetCore.Http
+
+@{
+    string? role = Context.Session.GetString("Role");
+    string? firstName = Context.Session.GetString("FirstName");
+    bool loggedIn = Context.Session.GetInt32("UserId").HasValue;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - RaceDay</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark raceday-nav">
+            <div class="container">
+                <a class="navbar-brand fw-bold"
+                   asp-controller="Events"
+                   asp-action="Index">
+                    🏁 RaceDay
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#racedayMenu"
+                        aria-controls="racedayMenu"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse"
+                     id="racedayMenu">
+
+                    <ul class="navbar-nav me-auto">
+                        @if (loggedIn && role == "Organiser")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Organiser"
+                                   asp-action="Dashboard">
+                                    Dashboard
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Organiser"
+                                   asp-action="Events">
+                                    Manage Events
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Organiser"
+                                   asp-action="CreateEvent">
+                                    Create Event
+                                </a>
+                            </li>
+                        }
+                        else if (loggedIn && role == "Participant")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Events"
+                                   asp-action="Index">
+                                    Upcoming Events
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Participant"
+                                   asp-action="MyEvents">
+                                    My Events
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Participant"
+                                   asp-action="MyResults">
+                                    My Results
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Participant"
+                                   asp-action="Profile">
+                                    Profile
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                        @if (loggedIn)
+                        {
+                            <li class="nav-item me-lg-3">
+                                <span class="navbar-text text-white">
+                                    Hello, @firstName
+                                </span>
+                            </li>
+
+                            <li class="nav-item">
+                                <form asp-controller="Account"
+                                      asp-action="Logout"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-outline-light btn-sm">
+                                        Logout
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Account"
+                                   asp-action="Login">
+                                    Login
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Account"
+                                   asp-action="Register">
+                                    Register
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">
+                @TempData["Error"]
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="raceday-footer mt-5">
+        <div class="container text-center py-3">
+            <p class="mb-0">
+                &copy; @DateTime.Now.Year RaceDay |
+                Run. Compete. Achieve.
+            </p>
+        </div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

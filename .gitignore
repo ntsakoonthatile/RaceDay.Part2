@@ -1,28 +1,31 @@
-# Visual Studio
+# Visual Studio and build files
 .vs/
+**/bin/
+**/obj/
+**/TestResults/
 *.user
 *.suo
-
-# Build folders
-bin/
-obj/
-
-# Test results
-TestResults/
-
-# Rider
 .idea/
-
-# Visual Studio Code
 .vscode/
 
-# Local databases
+# Never commit credentials
+**/secrets.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.pem
+*.key
+
+# Local databases, runtime uploads and logs
+*.mdf
+*.ldf
 *.db
 *.sqlite
-
-# Logs
 *.log
+RaceDay.Api/wwwroot/uploads/*
+!RaceDay.Api/wwwroot/uploads/.gitkeep
 
-# OS files
+# Temporary and OS files
 .DS_Store
 Thumbs.db

@@ -1,0 +1,90 @@
+﻿@using System.Text.Json
+@model JsonDocument?
+
+@{
+    ViewData["Title"] = "Event Categories";
+    int eventId = (int)ViewBag.EventId;
+}
+
+<h2>Manage Event Categories</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<a asp-controller="Organiser"
+   asp-action="CreateCategory"
+   asp-route-eventId="@eventId"
+   class="btn btn-primary mb-3">
+    Add Category
+</a>
+
+<a asp-action="Events" class="btn btn-secondary mb-3">
+    Back to Events
+</a>
+
+@if (Model == null ||
+    Model.RootElement.ValueKind != JsonValueKind.Array ||
+    Model.RootElement.GetArrayLength() == 0)
+{
+    <div class="alert alert-info">
+        No categories have been added for this event.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RootElement.EnumerateArray())
+                {
+                    int id = item.GetProperty("categoryId").GetInt32();
+                    string? name = item.GetProperty("categoryName").GetString();
+                    string? description = item.GetProperty("description").GetString();
+
+                    <tr>
+                        <td>@name</td>
+                        <td>@description</td>
+                        <td>
+                            <a asp-action="EditCategory"
+                               asp-route-id="@id"
+                               asp-route-eventId="@eventId"
+                               class="btn btn-sm btn-primary">
+                                Edit
+                            </a>
+
+                            <form asp-action="DeleteCategory"
+                                  method="post"
+                                  class="d-inline">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" name="id" value="@id" />
+                                <input type="hidden" name="eventId" value="@eventId" />
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Delete this category?')">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+

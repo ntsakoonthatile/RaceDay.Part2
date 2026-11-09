@@ -1,0 +1,80 @@
+﻿@model System.Text.Json.JsonDocument
+
+@{
+    ViewData["Title"] = "Organiser Dashboard";
+}
+
+<h2>Organiser Dashboard</h2>
+<p>Manage your RaceDay events and participants.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Total Events</h5>
+                <h2>@ViewBag.TotalEvents</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Upcoming Events</h5>
+                <h2>@ViewBag.UpcomingEvents</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Total Enrolments</h5>
+                <h2>@ViewBag.TotalEnrolments</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-action="CreateEvent" class="btn btn-primary me-2">
+    Create New Event
+</a>
+
+<a asp-action="Events" class="btn btn-secondary">
+    Manage Events
+</a>
+
+<h4 class="mt-4">Your Events</h4>
+
+@if (Model.RootElement.GetArrayLength() == 0)
+{
+    <p>You have not created any events yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RootElement.EnumerateArray())
+                {
+                    var name = item.GetProperty("name").GetString();
+                    var date = item.GetProperty("eventDate").GetString();
+                    var location = item.GetProperty("location").GetString();
+
+                    <tr>
+                        <td>@name</td>
+                        <td>@date</td>
+                        <td>@location</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

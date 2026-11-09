@@ -1,0 +1,66 @@
+﻿@model System.Text.Json.JsonDocument
+
+@{
+    ViewData["Title"] = "My Events";
+}
+
+<h2>My Enrolled Events</h2>
+
+@if (Model.RootElement.GetArrayLength() == 0)
+{
+    <p>You have not entered any events yet.</p>
+
+    <a asp-controller="Events" asp-action="Index"
+       class="btn btn-primary">Browse Events</a>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RootElement.EnumerateArray())
+                {
+                    var eventName = item.GetProperty("event")
+                    .GetString();
+
+                    var date = item.GetProperty("eventDate")
+                    .GetDateTime();
+
+                    var location = item.GetProperty("location")
+                    .GetString();
+
+                    var category = item.GetProperty("category")
+                    .GetString();
+
+                    var status = item.GetProperty("status")
+                    .GetString();
+
+                    string badge = status == "Confirmed"
+                    ? "bg-success"
+                    : status == "Pending"
+                    ? "bg-warning text-dark"
+                    : "bg-secondary";
+
+                    <tr>
+                        <td>@eventName</td>
+                        <td>@date.ToString("dd MMM yyyy")</td>
+                        <td>@location</td>
+                        <td>@category</td>
+                        <td>
+                            <span class="badge @badge">@status</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,91 @@
+﻿@using System.Text.Json
+@model RaceDay.Mvc.Models.EventViewModel
+
+@{
+    ViewData["Title"] = "Edit Event";
+}
+
+<h2>Edit Event</h2>
+
+<form asp-action="EditEvent" method="post"
+      enctype="multipart/form-data">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="EventId" />
+    <input type="hidden" asp-for="BannerImageUrl" />
+
+    <div asp-validation-summary="All"
+         class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="EventName" class="form-label"></label>
+        <input asp-for="EventName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EventDate" class="form-label"></label>
+        <input asp-for="EventDate" type="date" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Distance" class="form-label"></label>
+        <input asp-for="Distance" type="number"
+               min="0.1" step="0.1" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EventTypeId" class="form-label">
+            Event Type
+        </label>
+
+        <select asp-for="EventTypeId" class="form-select">
+            <option value="0">Select event type</option>
+
+            @if (ViewBag.EventTypes is JsonElement types &&
+                        types.ValueKind == JsonValueKind.Array)
+            {
+                @foreach (var type in types.EnumerateArray())
+                {
+                    int id = type.GetProperty("eventTypeId").GetInt32();
+                    string? name = type.GetProperty("typeName").GetString();
+
+                    <option value="@id">@name</option>
+                }
+            }
+        </select>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.BannerImageUrl))
+    {
+        <p>Current Banner:</p>
+        <img src="@Model.BannerImageUrl" alt="Current banner"
+             class="img-fluid mb-3"
+             style="max-height:160px" />
+    }
+
+    <div class="mb-3">
+        <label asp-for="BannerImage" class="form-label">
+            Replace Banner
+        </label>
+        <input asp-for="BannerImage" type="file"
+               accept="image/png,image/jpeg,image/webp"
+               class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Save Changes
+    </button>
+
+    <a asp-action="Events" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,147 +1,98 @@
+# RaceDay – Programming 2B POE Part 3
 
-# RaceDay Part 2
+## Project overview
 
-## 1. Project Description
+RaceDay is a sporting event management system built using ASP.NET Core MVC and an existing ASP.NET Core Web API. I extended the Part 2 API with web pages for Organisers and Participants in Part 3.
 
-RaceDay is a web-based event management system developed for road running, walking and cycling events in South Africa. The system helps event organisers manage events, categories, participant enrolments and race results. Participants can register for an account, log in, browse available events, enter events by selecting a category, view their enrolments and check their results. Organisers can create, update and delete events, manage event categories, view enrolments and capture participant results. This project implements the backend REST API using ASP.NET Core Web API, Entity Framework Core and Microsoft SQL Server. It also includes authentication, role-based access control, API documentation and automated unit testing.
+Organisers can manage events and categories, view event enrolments, update enrolment status and record results. Participants can browse upcoming events, enter an event, see their entries and results, and update their profiles.
 
-## 2. Technologies Used
+## Technologies
 
-The following technologies and tools were used to develop RaceDay Part 2:
+- C# and .NET 8
+- ASP.NET Core MVC and ASP.NET Core Web API
+- Entity Framework Core with SQL Server Express
+- HTML, CSS and Bootstrap
+- xUnit and Swagger
+- Docker and Docker Compose
+- GitHub Actions
+- Local image uploads through the API (lecturer-approved alternative to Azure Blob Storage)
 
-* **C#:** Main programming language.
-* **ASP.NET Core Web API:** Used to develop the REST API.
-* **Entity Framework Core:** Used to communicate with the database.
-* **Microsoft SQL Server:** Used to store application data.
-* **SQL Server Express:** Used as the local database server.
-* **Swagger:** Used to view and test API endpoints.
-* **BCrypt:** Used to hash passwords before storing them.
-* **ASP.NET Core Session:** Used to maintain the authenticated user's session and role.
-* **xUnit:** Used to write and run unit tests.
-* **Visual Studio:** Used to develop and test the application.
-* **Git and GitHub:** Used for version control and source code submission.
-* **GitHub Actions:** Used to build the project and run automated tests.
+## Project folders
 
-## 3. User Roles
+- `RaceDay.Api/` – controllers, DTOs, models, EF Core migrations, image upload endpoint and SQL Server access
+- `RaceDay.Mvc/` – MVC controllers, Razor views, models, API client and CSS
+- `RaceDay.Tests/` – automated API tests
+- `.github/workflows/part3-ci.yml` – build, test and Docker image checks
+- `compose.yaml` – starts the MVC website in Docker
 
-RaceDay supports two user roles.
+Open `RaceDay.Part2.sln` in Visual Studio 2022. The solution includes the Part 3 MVC project.
 
-### Organiser
+## Requirements
 
-An organiser can:
+Install .NET 8 SDK, Visual Studio 2022 (ASP.NET workload), SQL Server Express, and Docker Desktop if demonstrating the container. A local SQL Server database named `RaceDayPart2DB` was used during development.
 
-* Register and log in.
-* View and update their profile.
-* Create, view, update and delete events.
-* Create and manage event categories.
-* View enrolments for their events.
-* Update enrolment statuses.
-* Capture participant race results.
+The API's `ConnectionStrings:DefaultConnection` must match the SQL Server instance. Apply the project's existing EF Core migrations when setting up a new database, after checking whether the schema already exists.
 
-### Participant
+## Run locally
 
-A participant can:
+1. Restore the solution's NuGet packages and build it in Visual Studio.
+2. Start `RaceDay.Api` using its HTTPS launch profile. Swagger is normally at `https://localhost:7041/swagger/index.html`.
+3. Start `RaceDay.Mvc`. Its `appsettings.json` uses `https://localhost:7041/` as the local API address.
+4. Register or log in as an Organiser or Participant and test the available pages.
 
-* Register and log in.
-* View and update their profile.
-* Browse available events.
-* View event categories.
-* Enrol in an event by selecting a category.
-* View their own enrolments.
-* View their own race results.
+The API must stay running while the MVC website is used.
 
-The API uses role-based access control to restrict protected operations to authorised users.
+## Image storage
 
-## 4. Requirements
+For Part 3, local image storage was used as the lecturer-approved alternative to Azure. Users upload event banners or profile pictures in MVC. The MVC project sends the files to `POST /api/images/upload` in the API. The API validates the file and saves it in `RaceDay.Api/wwwroot/uploads`, then returns a URL which is stored on the corresponding Event or User record.
 
-Before running the project, make sure the following software is installed:
+Uploads support JPG, PNG and WebP up to 5 MB. Existing uploaded images are runtime data and are not included in this source repository. Upload fresh test images when running the project after cloning.
 
-* Visual Studio 2022 with the ASP.NET and web development workload.
-* .NET 8 SDK.
-* SQL Server Express.
-* SQL Server Management Studio (SSMS).
-* Git.
-* A web browser for Swagger testing.
+## Docker
 
-A GitHub account is also required to access the repository and view the automated build and test results.
+The Docker configuration runs the MVC project in a container. The Part 2 API and SQL Server Express run separately on the Docker host computer.
 
-## 5. Database Setup
+From the solution folder, run the API in PowerShell:
 
-RaceDay uses Microsoft SQL Server to store user accounts, event types, events, categories, enrolments and results.
+```powershell
+$env:Uploads__PublicBaseUrl = "http://localhost:5041"
+dotnet run --project .\RaceDay.Api\RaceDay.Api.csproj --no-launch-profile --urls "http://0.0.0.0:5041"
+```
 
-The application uses Entity Framework Core migrations to create and update the database structure.
+In a second terminal in the same folder:
 
-### Steps to set up the database
+```powershell
+docker compose up --build
+```
 
-1. Install and open SQL Server Express.
-2. Confirm that the SQL Server instance is available.
-3. Open the RaceDay solution in Visual Studio.
-4. Open appsettings.json.
-5. Check the connection string under ConnectionStrings.
-6. Confirm that the server name matches your local SQL Server instance.
+Open `http://localhost:8080`. The MVC container contacts the API via `http://host.docker.internal:5041/`.
 
+**Important for a virtual machine:** `host.docker.internal` refers to the Docker host, not automatically to a separate VM. If the API is running in a VM but Docker is running on a different laptop, adjust the API address and VM networking before testing. Stop the container with `docker compose down`.
 
-10. Open SQL Server Management Studio and refresh the Databases folder.
-11. Confirm that the RaceDayPart2DB database and its tables have been created.
+## Testing
 
-**Note:** The connection string must match your own SQL Server setup. If your database already exists and contains data, check the migration status before making database changes.
+Run the tests using:
 
-## 6. How to Open and Run the Project
+```powershell
+dotnet test RaceDay.Tests/RaceDay.Tests.csproj
+```
 
-1. Open the cloned project folder.
-2. Locate RaceDay.Part2.sln.
-3. Open the solution in Visual Studio.
-4. Wait for NuGet packages to restore.
-5. Check the database connection string in appsettings.json.
-6. Ensure that SQL Server Express is running.
-7. Set RaceDay.Api as the startup project.
-8. Build the solution by selecting **Build → Build Solution**.
-9. Run the application using the HTTPS or HTTP launch profile.
-10. Swagger should open in the browser if it is enabled in the current development configuration.
+Manual checks should include login, role-specific navigation, events and categories, enrolments, results, profile changes, image uploading and the Docker website. The presence of the workflow does not guarantee a green CI run; check GitHub Actions for the latest result.
 
-## 8. Testing the API
+## GitHub Actions
 
-Swagger provides an interface for viewing and testing the available API endpoints.
+The Part 3 workflow restores and builds the API, MVC and tests, runs the automated test project and builds the MVC Docker image. The workflow is at `.github/workflows/part3-ci.yml`. Check its run in the Actions tab.
 
-The API includes functionality for:
+## Video presentation
 
-* User registration and login.
-* User profile management.
-* Event management.
-* Event category management.
-* Participant enrolments.
-* Enrolment status management.
-* Race result management.
+Part 3 demonstration video: **add your unlisted YouTube URL here before submitting.**
 
-To test the API:
+The presentation should show the MVC structure, Organiser and Participant features, image uploads into the API's local folder, Docker and GitHub Actions.
 
-1. Run the application.
-2. Open Swagger in the browser.
-3. Register a user with the Organiser or Participant role.
-4. Log in using the registered account.
-5. Test the endpoints available to that role.
-6. Confirm that protected endpoints reject unauthenticated requests.
-7. Confirm that users cannot perform actions restricted to the other role.
+## AI assistance disclosure
 
-Use valid request data when testing the endpoints.
+I used ChatGPT to help with understanding requirements, troubleshooting, code examples and documentation. I reviewed and adapted the code during development and carried out testing as part of the project work.
 
-## 9. Running Unit Tests
+## Conclusion
 
-The solution includes an xUnit test project called RaceDay.Tests.
-
-To run the tests in Visual Studio:
-
-1. Open the solution.
-2. Select **Test → Test Explorer**.
-3. Click **Run All Tests**.
-4. Check the results and investigate any failed tests.
-
-## Video Presentation
-https://youtu.be/has0DX77ZJQ
-
-RaceDay Part 2 provides a backend API for managing road running, walking and cycling events. It supports two user roles and includes event management, category management, participant enrolments and race results.The project uses Entity Framework Core and SQL Server for data storage, Swagger for API testing, xUnit for automated testing and GitHub Actions for continuous integration. These technologies help make the system easier to develop, test and maintain.
-
-##  AI Assistance Disclosure
-Was used when I was stuck
-
-AI assistance was used to help understand the requirements, troubleshoot errors and support parts of the development process. The code and project functionality should be reviewed and tested by the student before submission.
+RaceDay Part 3 shows how an MVC website can communicate with an existing API to manage sporting events. It also includes image uploading, a container setup and automated build and test checks.
