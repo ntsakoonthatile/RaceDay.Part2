@@ -7,6 +7,21 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaceDay.Api", "RaceDay.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaceDay.Tests", "RaceDay.Tests\RaceDay.Tests.csproj", "{9051C72A-518D-4ACA-8E21-7454C3DED09F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{98DE55D1-62A0-4026-9E84-7DDEA6BA515D}"
+	ProjectSection(SolutionItems) = preProject
+		part2-ci.yml = part2-ci.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaceDay.Mvc", "RaceDay.Mvc\RaceDay.Mvc.csproj", "{697FF051-CA20-4B31-AB1D-DF6C67AC5553}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +36,16 @@ Global
 		{9051C72A-518D-4ACA-8E21-7454C3DED09F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9051C72A-518D-4ACA-8E21-7454C3DED09F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9051C72A-518D-4ACA-8E21-7454C3DED09F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{697FF051-CA20-4B31-AB1D-DF6C67AC5553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{697FF051-CA20-4B31-AB1D-DF6C67AC5553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{697FF051-CA20-4B31-AB1D-DF6C67AC5553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{697FF051-CA20-4B31-AB1D-DF6C67AC5553}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{98DE55D1-62A0-4026-9E84-7DDEA6BA515D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C51164A3-9296-4CFE-A46A-4CAE657B8D62}

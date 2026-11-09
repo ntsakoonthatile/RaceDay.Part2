@@ -1,0 +1,149 @@
+
+:root {
+    --raceday-navy: #101d32;
+    --raceday-blue: #203b60;
+    --raceday-orange: #ff792e;
+    --raceday-light: #f3f6fb;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--raceday-light);
+    color: #243247;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+main {
+    flex: 1;
+}
+
+.raceday-nav {
+    background-color: var(--raceday-navy);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-bottom: 4px solid var(--raceday-orange);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+    .nav-link:hover {
+        color: var(--raceday-orange) !important;
+    }
+
+h1, h2, h3, h4, h5 {
+    color: var(--raceday-navy);
+    font-weight: 700;
+}
+
+.card {
+    border: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+.card-body {
+    padding: 22px;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-primary {
+    background-color: var(--raceday-blue);
+    border-color: var(--raceday-blue);
+}
+
+    .btn-primary:hover {
+        background-color: var(--raceday-navy);
+        border-color: var(--raceday-navy);
+    }
+
+.btn-success {
+    background-color: #218653;
+    border-color: #218653;
+}
+
+.btn-info {
+    background-color: #dceaf7;
+    border-color: #dceaf7;
+    color: var(--raceday-navy);
+}
+
+.table {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .table thead th {
+        background-color: var(--raceday-navy);
+        color: white;
+        border: 0;
+        padding: 14px;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 12px;
+    }
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    padding: 10px;
+}
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--raceday-orange);
+        box-shadow: 0 0 0 0.2rem rgba(255, 121, 46, 0.15);
+    }
+
+.badge {
+    padding: 8px 11px;
+    border-radius: 7px;
+}
+
+.raceday-footer {
+    background-color: var(--raceday-navy);
+    color: #ffffff;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+    .card-body {
+        padding: 16px;
+    }
+
+    .table {
+        font-size: 0.9rem;
+    }
+
+    .btn-sm {
+        margin-bottom: 3px;
+    }
+}

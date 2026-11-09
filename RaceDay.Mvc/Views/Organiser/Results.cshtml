@@ -1,0 +1,125 @@
+﻿@using System.Text.Json
+@model JsonDocument?
+
+@{
+    ViewData["Title"] = "Race Results";
+    int eventId = (int)ViewBag.EventId;
+}
+
+<h2>Capture Race Results</h2>
+
+<p>Enter each participant's finish time and finishing position.</p>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<a asp-action="Events" class="btn btn-secondary mb-3">
+    Back to Events
+</a>
+
+@if (Model == null ||
+    Model.RootElement.ValueKind != JsonValueKind.Array ||
+    Model.RootElement.GetArrayLength() == 0)
+{
+    <div class="alert alert-info">
+        There are no enrolled participants for this event.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Participant</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Finish Time</th>
+                    <th>Position</th>
+                    <th>Publish</th>
+                    <th>Save</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RootElement.EnumerateArray())
+                {
+                    int enrolmentId = item.GetProperty("enrolmentId").GetInt32();
+                    string? participant = item.GetProperty("participant").GetString();
+                    string? category = item.GetProperty("category").GetString();
+                    string? status = item.GetProperty("status").GetString();
+
+                    string formId = $"result-{enrolmentId}";
+
+                    <tr>
+                        <td>@participant</td>
+                        <td>@category</td>
+                        <td>@status</td>
+                        <td>
+                            <input form="@formId"
+                                   type="text"
+                                   name="finishTime"
+                                   placeholder="01:25:30"
+                                   pattern="[0-9]{1,3}:[0-5][0-9]:[0-5][0-9]"
+                                   title="Use hours:minutes:seconds"
+                                   class="form-control form-control-sm"
+                                   required />
+                        </td>
+                        <td>
+                            <input form="@formId"
+                                   type="number"
+                                   name="position"
+                                   min="1"
+                                   class="form-control form-control-sm"
+                                   required />
+                        </td>
+                        <td>
+                            <input form="@formId"
+                                   type="checkbox"
+                                   name="published"
+                                   value="true"
+                                   checked />
+                            <input form="@formId"
+                                   type="hidden"
+                                   name="published"
+                                   value="false" />
+                        </td>
+                        <td>
+                            <form id="@formId"
+                                  asp-action="SaveResult"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="enrolmentId"
+                                       value="@enrolmentId" />
+
+                                <input type="hidden"
+                                       name="eventId"
+                                       value="@eventId" />
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-success">
+                                    Save
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <p class="text-muted">
+        Note: Results can only be created once per enrolment
+        with the existing Part 2 API. The remaining API enhancement
+        below will add result editing.
+    </p>
+}
+

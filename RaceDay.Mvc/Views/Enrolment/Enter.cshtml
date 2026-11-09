@@ -1,0 +1,53 @@
+﻿@using System.Text.Json
+@model RaceDay.Mvc.Models.EnrolmentViewModel
+
+@{
+    ViewData["Title"] = "Enter Event";
+    var categories = (JsonElement)ViewBag.Categories;
+}
+
+<h2>Enter: @ViewBag.EventName</h2>
+
+<form asp-action="Enter" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="EventId" />
+
+    <div asp-validation-summary="All"
+         class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <label asp-for="CategoryId"
+               class="form-label">Select Category</label>
+
+        <select asp-for="CategoryId" class="form-select">
+            <option value="0">Choose a category</option>
+
+            @foreach (var category in categories.EnumerateArray())
+            {
+                var id = category.GetProperty("categoryId")
+                .GetInt32();
+
+                var name = category.GetProperty("categoryName")
+                .GetString();
+
+                <option value="@id">@name</option>
+            }
+        </select>
+
+        <span asp-validation-for="CategoryId"
+              class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success"
+            disabled="@(categories.GetArrayLength() == 0)">
+        Confirm Enrolment
+    </button>
+
+    <a asp-controller="Events"
+       asp-action="Details"
+       asp-route-id="@Model.EventId"
+       class="btn btn-secondary">
+        Cancel
+    </a>
+</form>

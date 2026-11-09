@@ -1,0 +1,100 @@
+﻿@model System.Text.Json.JsonDocument
+
+@{
+    ViewData["Title"] = "Manage Events";
+}
+
+<h2>Manage My Events</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<a asp-action="CreateEvent"
+   class="btn btn-primary mb-3">
+    Create New Event
+</a>
+
+@if (Model.RootElement.GetArrayLength() == 0)
+{
+    <p>No events have been created yet.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Distance</th>
+                    <th>Management</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.RootElement.EnumerateArray())
+                {
+                    int id = item.GetProperty("eventId").GetInt32();
+
+                    var name = item.GetProperty("name").GetString();
+                    var date = item.GetProperty("eventDate").GetString();
+                    var location = item.GetProperty("location").GetString();
+                    var distance = item.GetProperty("distanceKm").GetDecimal();
+
+                    <tr>
+                        <td>@name</td>
+                        <td>@date</td>
+                        <td>@location</td>
+                        <td>@distance km</td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                <a asp-action="EditEvent"
+                                   asp-route-id="@id"
+                                   class="btn btn-sm btn-primary">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Categories"
+                                   asp-route-eventId="@id"
+                                   class="btn btn-sm btn-info">
+                                    Categories
+                                </a>
+
+                                <a asp-action="Enrolments"
+                                   asp-route-eventId="@id"
+                                   class="btn btn-sm btn-secondary">
+                                    Enrolments
+                                </a>
+
+                                <a asp-action="Results"
+                                   asp-route-eventId="@id"
+                                   class="btn btn-sm btn-success">
+                                    Results
+                                </a>
+
+                                <form asp-action="DeleteEvent"
+                                      asp-route-id="@id"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Delete this event?')">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
