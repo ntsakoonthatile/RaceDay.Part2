@@ -1,0 +1,46 @@
+name: Import RaceDay Part 3 ZIP
+
+on:
+  push:
+    paths:
+      - RaceDay.Part3_GitHubReady.zip
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: raceday-part3-import
+  cancel-in-progress: false
+
+jobs:
+  unpack-project:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Extract the clean Part 3 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f RaceDay.Part3_GitHubReady.zip
+          unzip -q -o RaceDay.Part3_GitHubReady.zip
+          rm RaceDay.Part3_GitHubReady.zip
+
+      - name: Commit extracted source folders and remove ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Import RaceDay Part 3 source, MVC, API, tests and documentation"
+            git push origin HEAD:main
+          fi
