@@ -3,7 +3,8 @@ name: Import RaceDay Part 3 ZIP
 on:
   push:
     paths:
-      - RaceDay.Part3_GitHubReady.zip
+      - 'RaceDay_Upload.zip'
+      - 'RaceDay.Part3_GitHubReady.zip'
   workflow_dispatch:
 
 permissions:
@@ -23,15 +24,23 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Extract the clean Part 3 project
+      - name: Extract Part 3 sources
         shell: bash
         run: |
           set -euo pipefail
-          test -f RaceDay.Part3_GitHubReady.zip
-          unzip -q -o RaceDay.Part3_GitHubReady.zip
-          rm RaceDay.Part3_GitHubReady.zip
+          if [ -f RaceDay_Upload.zip ]; then
+            archive=RaceDay_Upload.zip
+          elif [ -f RaceDay.Part3_GitHubReady.zip ]; then
+            archive=RaceDay.Part3_GitHubReady.zip
+          else
+            echo "No RaceDay ZIP found in the repository root"
+            exit 1
+          fi
+          unzip -tq "$archive"
+          unzip -qo "$archive"
+          rm -f RaceDay_Upload.zip RaceDay.Part3_GitHubReady.zip
 
-      - name: Commit extracted source folders and remove ZIP
+      - name: Commit extracted project structure
         shell: bash
         run: |
           set -euo pipefail
@@ -39,8 +48,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "No changes to commit"
+            echo "No project changes to commit"
           else
-            git commit -m "Import RaceDay Part 3 source, MVC, API, tests and documentation"
+            git commit -m "Import RaceDay Part 3 source folders and documentation"
             git push origin HEAD:main
           fi
